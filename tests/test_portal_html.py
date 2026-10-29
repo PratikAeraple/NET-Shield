@@ -1,6 +1,7 @@
 from html.parser import HTMLParser
 from pathlib import Path
 import unittest
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1] / "web"
 
@@ -27,6 +28,9 @@ class PortalHtmlTests(unittest.TestCase):
                 self.assertEqual(page.title, 1)
                 if path.name != "404.html": self.assertTrue(page.canonical.startswith("https://netshield.brutehack.com/"))
                 self.assertTrue(all(alt and alt.strip() for alt in page.images))
+    def test_svg_assets_are_well_formed_xml(self):
+        ET.parse(ROOT / 'assets/architecture.svg')
+
     def test_project_identity_and_no_external_font_or_script_dependency(self):
         html = (ROOT / "index.html").read_text()
         css = (ROOT / "assets/site.css").read_text()
