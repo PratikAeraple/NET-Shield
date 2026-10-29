@@ -1,0 +1,10 @@
+{
+  "id": "netshield",
+  "title": "NETSHIELD",
+  "hostname": "netshield.brutehack.com",
+  "hostnames": [
+    "netshield.brutehack.com"
+  ],
+  "status": "portfolio demonstration",
+  "health_identity": "netshield-ready"
+}

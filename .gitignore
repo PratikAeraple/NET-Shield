@@ -1,0 +1,12 @@
+node_modules/
+coverage/
+.pytest_cache/
+__pycache__/
+.runtime/
+.env
+.env.*
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl.tmp
+*.log

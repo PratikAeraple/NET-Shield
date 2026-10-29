@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://netshield.brutehack.com/sitemap.xml

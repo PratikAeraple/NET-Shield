@@ -1,0 +1,10 @@
+source_zone,destination_zone,service,decision,logging,implementation_status,reason
+ADMIN,SERVER,approved management endpoints,ALLOW,yes,DESIGNED,Named admin sources to required management ports only
+ADMIN,APPLICATION,application HTTPS,DENY,yes,DESIGNED,Administrative clients do not receive general app-network access
+SERVER,approved upstream,DNS UDP/TCP 53,ALLOW,yes,DESIGNED,Resolver forwarding
+SERVER,approved upstream,NTP UDP 123,ALLOW,yes,DESIGNED,Time synchronization
+APPLICATION,SERVER,DNS UDP/TCP 53,ALLOW,yes,DESIGNED,Name resolution only
+APPLICATION,SERVER,per-app data port,ALLOW,yes,DESIGNED,Explicit application dependency only
+TESTING,production zones,any,DENY,yes,DESIGNED,Testing has no production route
+MONITORING,explicit endpoints,exact health port,ALLOW,yes,DESIGNED,Read-only health probes
+ANY,ANY,any,DENY,yes,DESIGNED,Default deny

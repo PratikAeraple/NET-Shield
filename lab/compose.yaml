@@ -1,0 +1,75 @@
+services:
+  netshield-lab-web:
+    container_name: netshield-lab-web
+    user: "1000:1000"
+    image: node:24.22.1-bookworm-slim@sha256:be8204d4bd327363357f532187b752ff62759c31bedf98e9e18fc08c9cbd605c
+    command: [node, -e, "const h=require('node:http').createServer((q,s)=>{if(q.url==='/slow')return setTimeout(()=>s.end('late'),1200);s.end('netshield-lab-ready')});h.listen(8080,'0.0.0.0')"]
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 32
+    mem_limit: 64m
+    cpus: 0.25
+    networks:
+      lab:
+        aliases: [netshield-lab-web]
+
+  netshield-lab-isolated-target:
+    container_name: netshield-lab-isolated-target
+    user: "1000:1000"
+    image: node:24.22.1-bookworm-slim@sha256:be8204d4bd327363357f532187b752ff62759c31bedf98e9e18fc08c9cbd605c
+    command: [node, -e, "require('node:http').createServer((q,s)=>s.end('isolated')).listen(9090,'0.0.0.0')"]
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 32
+    mem_limit: 64m
+    cpus: 0.25
+    networks:
+      isolated:
+        aliases: [netshield-lab-isolated-target]
+
+  netshield-lab-tls:
+    container_name: netshield-lab-tls
+    user: "1000:1000"
+    image: node:24.22.1-bookworm-slim@sha256:be8204d4bd327363357f532187b752ff62759c31bedf98e9e18fc08c9cbd605c
+    command: [node, /lab/tls-server.mjs]
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 32
+    mem_limit: 64m
+    cpus: 0.25
+    volumes:
+      - ./.runtime:/certs:ro
+      - ./tls-server.mjs:/lab/tls-server.mjs:ro
+    networks:
+      lab:
+        aliases: [netshield-lab-tls]
+
+  netshield-lab-probe:
+    user: "1000:1000"
+    image: node:24.22.1-bookworm-slim@sha256:be8204d4bd327363357f532187b752ff62759c31bedf98e9e18fc08c9cbd605c
+    command: [node, /lab/verify.mjs]
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 32
+    mem_limit: 64m
+    cpus: 0.25
+    volumes:
+      - ./verify.mjs:/lab/verify.mjs:ro
+      - ./.runtime:/certs:ro
+    networks: [lab]
+
+networks:
+  lab:
+    name: brutehost-netshield-lab
+    internal: true
+  isolated:
+    name: brutehost-netshield-isolated
+    internal: true
